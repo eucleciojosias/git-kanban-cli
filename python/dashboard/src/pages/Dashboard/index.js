@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { Progress } from 'semantic-ui-react'
-import metrics from '../../dados/metrics.json';
+import metrics from '../../data/metrics.json';
 
 import { Container, Content, Charts } from './styles';
 import SideBar from '../../components/SideBar';
