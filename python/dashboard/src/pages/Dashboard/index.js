@@ -1,97 +1,17 @@
 import React, { Component, Fragment } from 'react';
 import { Progress } from 'semantic-ui-react'
+import metrics from '../../dados/metrics.json';
 
-import { Container, Charts } from './styles';
+import { Container, Content, Charts } from './styles';
+import SideBar from '../../components/SideBar';
 import Collaborators from '../../components/Collaborators';
 import Categories from '../../components/Categories';
 
 class Dashboard extends Component {
   state = {
-    json: {
-      "collaborators": [
-          {
-              "name": "Euclécio",
-              "pair_count": 2,
-              "tasks_count": 5
-          },
-          {
-              "name": "Harold",
-              "pair_count": 2,
-              "tasks_count": 4
-          },
-          {
-              "name": "Vitor",
-              "pair_count": 2,
-              "tasks_count": 6
-          },
-          {
-              "name": "Filipe",
-              "pair_count": 2,
-              "tasks_count": 2
-          },
-          {
-              "name": "Ismael (Compufour)",
-              "pair_count": 0,
-              "tasks_count": 2
-          },
-          {
-              "name": "Anderson (Coderockr)",
-              "pair_count": 0,
-              "tasks_count": 0
-          },
-          {
-              "name": "Felipe F. (Coderockr)",
-              "pair_count": 0,
-              "tasks_count": 0
-          }
-      ],
-      "labels": [
-          {
-              "label": "Category: Backend",
-              "tasks_count": 5
-          },
-          {
-              "label": "Category: DevOps",
-              "tasks_count": 4
-          },
-          {
-              "label": "Category: Frontend",
-              "tasks_count": 7
-          },
-          {
-              "label": "Category: Mobile",
-              "tasks_count": 0
-          },
-          {
-              "label": "Category: UX",
-              "tasks_count": 0
-          },
-          {
-              "label": "Reseller Demand",
-              "tasks_count": 2
-          },
-          {
-              "label": "Type: Bug",
-              "tasks_count": 4
-          },
-          {
-              "label": "Type: Improvement",
-              "tasks_count": 5
-          },
-          {
-              "label": "Type: Maintenance",
-              "tasks_count": 3
-          },
-          {
-              "label": "Type: New feature",
-              "tasks_count": 3
-          }
-      ],
-      "total_tasks": 15,
-      "percent": 80,
-    },
-    data: {},
-    data2: {},
+    githubMetrics: {},
+    dataCollaborators: {},
+    dataCategories: {},
     totalTasks: '',
     colors: [
       '195, 41, 41',
@@ -108,11 +28,15 @@ class Dashboard extends Component {
   }
 
   componentDidMount() {
-    this.updateChart();
+    this.setState({ githubMetrics: metrics }, () => {
+      setTimeout(() => {
+        this.updateChart();
+      }, 600)
+    })
   }
 
   updateChart = async () => {
-    const data = await this.state.json['collaborators'].map((collaborator, index) => {
+    const tasksArray = await this.state.githubMetrics['collaborators'].map((collaborator, index) => {
       let arrayValues = [0,0,0,0,0,0,0];
       arrayValues[index] = collaborator.tasks_count;
       return {
@@ -125,7 +49,7 @@ class Dashboard extends Component {
         stack: 1
       }
     })
-    const data1 = await this.state.json['collaborators'].map((collaborator,index) => {
+    const pairArray = await this.state.githubMetrics['collaborators'].map((collaborator,index) => {
       let arrayValues = [0,0,0,0,0,0,0];
       arrayValues[index] = collaborator.pair_count;
       return {
@@ -139,17 +63,17 @@ class Dashboard extends Component {
       }
     })
 
-    const newArray = this.arrayInterpolation(data, data1)
+    const arrayCollaborators = this.arrayInterpolation(tasksArray, pairArray)
 
-    const dataResult = {
+    const dataResultCollaborators = {
       labels: ['Euclecio', 'Harold', 'Vitor', 'Filipe', 'Ismael', 'Anderson', 'Felipe F.'],
-      datasets: newArray,
+      datasets: arrayCollaborators,
     }
 
-    this.setState({ data: dataResult })
+    this.setState({ dataCollaborators: dataResultCollaborators })
 
     const { colors } = this.state;
-    const data2 = await this.state.json['labels'].map((label, index) => {
+    const categoriesArray = await this.state.githubMetrics['labels'].map((label, index) => {
       let arrayValues = [0,0,0,0,0,0,0,0,0,0];
       arrayValues[index] = label.tasks_count;
       return {
@@ -162,40 +86,43 @@ class Dashboard extends Component {
       }
     })
 
-    const dataResult2 = {
+    const dataResultCategories = {
       labels: ['Backend', 'DevOps', 'Frontend', 'Mobile', 'UX', 'Reseller Demand', 'Bug', 'Improvement', 'Maintenance', 'New feature'],
-      datasets: data2,
+      datasets: categoriesArray,
     }
-    this.setState({ data2: dataResult2})
-    this.setState({ totalTasks: this.state.json['total_tasks'], percent: this.state.json['percent'] })
+    this.setState({ dataCategories: dataResultCategories})
+    this.setState({ totalTasks: this.state.githubMetrics['total_tasks'], percent: this.state.githubMetrics['percent'] })
   }
 
   arrayInterpolation = (data, data1) => {
     var limit = data.length < data1.length ? data1.length : data.length;
-    var newArray = [];
+    var arrayInterpolated = [];
 
     for(var i = 0; i < limit; i++) {
-      if(data.length > 0) newArray.push(data.shift());
-      if(data1.length > 0) newArray.push(data1.shift());
+      if(data.length > 0) arrayInterpolated.push(data.shift());
+      if(data1.length > 0) arrayInterpolated.push(data1.shift());
     }
 
-    return newArray;
+    return arrayInterpolated;
   }
 
   render() {
-    const {data, data2, totalTasks, percent } = this.state;
+    const {dataCollaborators, dataCategories, totalTasks, percent } = this.state;
     return (
       <Fragment>
         <Container>
-          <h1>Total tasks: {totalTasks}</h1>
-          <Charts>
-            <Collaborators data={data}/>
-            <Categories data={data2}/>
-          </Charts>
+          <SideBar />
+          <Content>
+            <h1>Total tasks: {totalTasks}</h1>
+            <Charts>
+              <Collaborators data={dataCollaborators}/>
+              <Categories data={dataCategories}/>
+            </Charts>
+            <div style={{ paddingLeft: 80, paddingRight: 80 }}>
+              <Progress percent={percent} indicating progress size="large" />
+            </div>
+          </Content>
         </Container>
-        <div style={{ paddingLeft: 80, paddingRight: 80 }}>
-          <Progress percent={percent} indicating progress size="large" />
-        </div>
       </Fragment>
     )
   }

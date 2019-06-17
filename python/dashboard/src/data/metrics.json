@@ -1,0 +1,83 @@
+{
+  "collaborators": [
+      {
+          "name": "Euclécio",
+          "pair_count": 2,
+          "tasks_count": 5
+      },
+      {
+          "name": "Harold",
+          "pair_count": 2,
+          "tasks_count": 4
+      },
+      {
+          "name": "Vitor",
+          "pair_count": 2,
+          "tasks_count": 6
+      },
+      {
+          "name": "Filipe",
+          "pair_count": 2,
+          "tasks_count": 2
+      },
+      {
+          "name": "Ismael (Compufour)",
+          "pair_count": 0,
+          "tasks_count": 2
+      },
+      {
+          "name": "Anderson (Coderockr)",
+          "pair_count": 0,
+          "tasks_count": 0
+      },
+      {
+          "name": "Felipe F. (Coderockr)",
+          "pair_count": 0,
+          "tasks_count": 0
+      }
+  ],
+  "labels": [
+      {
+          "label": "Category: Backend",
+          "tasks_count": 5
+      },
+      {
+          "label": "Category: DevOps",
+          "tasks_count": 4
+      },
+      {
+          "label": "Category: Frontend",
+          "tasks_count": 7
+      },
+      {
+          "label": "Category: Mobile",
+          "tasks_count": 0
+      },
+      {
+          "label": "Category: UX",
+          "tasks_count": 0
+      },
+      {
+          "label": "Reseller Demand",
+          "tasks_count": 2
+      },
+      {
+          "label": "Type: Bug",
+          "tasks_count": 4
+      },
+      {
+          "label": "Type: Improvement",
+          "tasks_count": 5
+      },
+      {
+          "label": "Type: Maintenance",
+          "tasks_count": 3
+      },
+      {
+          "label": "Type: New feature",
+          "tasks_count": 3
+      }
+  ],
+  "total_tasks": 15,
+  "percent": 80
+}
