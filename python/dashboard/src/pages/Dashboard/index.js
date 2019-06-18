@@ -1,133 +1,99 @@
-import React, { Component, Fragment } from 'react';
-import { Progress } from 'semantic-ui-react'
+import React, { Component } from 'react';
 import metrics from '../../data/metrics.json';
+import { Responsive, WidthProvider } from 'react-grid-layout';
+import moment from 'moment';
 
-import { Container, Content, Charts } from './styles';
-import SideBar from '../../components/SideBar';
+import { Container, Title } from './styles';
+import Labels from '../../components/Labels';
 import Collaborators from '../../components/Collaborators';
-import Categories from '../../components/Categories';
+
+const ResponsiveGridLayout = WidthProvider(Responsive);
+
+const cols = { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 };
+const breakpoints = { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 };
 
 class Dashboard extends Component {
   state = {
-    githubMetrics: {},
-    dataCollaborators: {},
-    dataCategories: {},
-    totalTasks: '',
-    colors: [
-      '195, 41, 41',
-      '32, 123, 32',
-      '229, 99, 51',
-      '244, 210, 29',
-      '139, 69, 19',
-      '131, 150, 99',
-      '142, 95, 86',
-      '0, 0, 205',
-      '153, 50, 204',
-      '225, 198, 53'
-      ]
+    metricsGithub: [],
+    collaboratorsData: [],
+    labelsData: [],
+    layouts: {}
   }
 
   componentDidMount() {
-    this.setState({ githubMetrics: metrics }, () => {
-      setTimeout(() => {
-        this.updateChart();
-      }, 600)
-    })
+    setTimeout(() => {
+      this.updateChart();
+    }, 600)
   }
 
   updateChart = async () => {
-    const tasksArray = await this.state.githubMetrics['collaborators'].map((collaborator, index) => {
-      let arrayValues = [0,0,0,0,0,0,0];
-      arrayValues[index] = collaborator.tasks_count;
-      return {
-        label: `${collaborator.name} - tasks` ,
-        backgroundColor: 'rgb(58, 61, 186, 0.4)',
-        borderColor: 'rgba(58, 61, 186,1)',
-        hoverBackgroundColor: 'rgba(58, 61, 186,0.6)',
-        hoverBorderColor: 'rgba(58, 61, 186,1)',
-        data: arrayValues,
-        stack: 1
+    const chartData  = []
+
+    metrics.collaborators.forEach(collaborator => {
+      if (collaborator.tasks_count > 0) {
+        const collaboratorFormatted = {
+          name: collaborator.name.substr(0, 12),
+          total: collaborator.tasks_count,
+          pair: collaborator.pair_count
+        }
+        chartData.push(collaboratorFormatted)
       }
-    })
-    const pairArray = await this.state.githubMetrics['collaborators'].map((collaborator,index) => {
-      let arrayValues = [0,0,0,0,0,0,0];
-      arrayValues[index] = collaborator.pair_count;
-      return {
-        label: `${collaborator.name} - pair`,
-        backgroundColor: 'rgb(32, 123, 32, 0.4)',
-        borderColor: 'rgba(32, 123, 32,1)',
-        hoverBackgroundColor: 'rgba(32, 123, 32,0.6)',
-        hoverBorderColor: 'rgba(32, 123, 32,1)',
-        data: arrayValues,
-        stack: 2
+    });
+
+    const labelsData = []
+
+    metrics.labels.forEach(labels => {
+      if (labels.tasks_count > 0) {
+        const labelsFormatted = {
+          name: labels.label,
+          total: labels.tasks_count,
+        }
+        labelsData.push(labelsFormatted)
       }
-    })
-
-    const arrayCollaborators = this.arrayInterpolation(tasksArray, pairArray)
-
-    const dataResultCollaborators = {
-      labels: ['Euclecio', 'Harold', 'Vitor', 'Filipe', 'Ismael', 'Anderson', 'Felipe F.'],
-      datasets: arrayCollaborators,
-    }
-
-    this.setState({ dataCollaborators: dataResultCollaborators })
-
-    const { colors } = this.state;
-    const categoriesArray = await this.state.githubMetrics['labels'].map((label, index) => {
-      let arrayValues = [0,0,0,0,0,0,0,0,0,0];
-      arrayValues[index] = label.tasks_count;
-      return {
-        label: label.label,
-        backgroundColor: `rgb(${colors[index]}, 0.4)`,
-        borderColor: `rgb(${colors[index]})`,
-        hoverBackgroundColor: `rgb(${colors[index]}, 0.6)`,
-        hoverBorderColor: `rgb(${colors[index]})`,
-        data: arrayValues
-      }
-    })
-
-    const dataResultCategories = {
-      labels: ['Backend', 'DevOps', 'Frontend', 'Mobile', 'UX', 'Reseller Demand', 'Bug', 'Improvement', 'Maintenance', 'New feature'],
-      datasets: categoriesArray,
-    }
-    this.setState({ dataCategories: dataResultCategories})
-    this.setState({ totalTasks: this.state.githubMetrics['total_tasks'], percent: this.state.githubMetrics['percent'] })
+    });
+    this.setState({ collaboratorsData: chartData, labelsData, totalTasks: metrics.total_tasks })
   }
 
-  arrayInterpolation = (data, data1) => {
-    var limit = data.length < data1.length ? data1.length : data.length;
-    var arrayInterpolated = [];
-
-    for(var i = 0; i < limit; i++) {
-      if(data.length > 0) arrayInterpolated.push(data.shift());
-      if(data1.length > 0) arrayInterpolated.push(data1.shift());
-    }
-
-    return arrayInterpolated;
+  getDate = () => {
+    return moment().format('DD/MM/YYYY');
   }
 
   render() {
-    const {dataCollaborators, dataCategories, totalTasks, percent } = this.state;
+    const { collaboratorsData, labelsData, totalTasks } = this.state;
     return (
-      <Fragment>
-        <Container>
-          <SideBar />
-          <Content>
-            <h1>Total tasks: {totalTasks}</h1>
-            <Charts>
-              <Collaborators data={dataCollaborators}/>
-              <Categories data={dataCategories}/>
-            </Charts>
-            <div style={{ paddingLeft: 80, paddingRight: 80 }}>
-              <Progress percent={percent} indicating progress size="large" />
+      <Container>
+        <Title>
+          <span>{this.getDate()}</span>
+          <span>Total tasks: {totalTasks}</span>
+        </Title>
+        <ResponsiveGridLayout
+          layouts={this.state.layouts}
+          breakpoints={breakpoints}
+          draggableHandle='.card-header'
+          rowHeight={400}
+          cols={cols}
+          margin={[25, 25]}
+        >
+          <div key="1" className="card" data-grid={{x: 0, y: 0, w: 6, h: 1}}>
+              <div className="card-header">
+                <h1>Colaboradores</h1>
+              </div>
+              <div className="card-body">
+                <Collaborators data={collaboratorsData} total={totalTasks}/>
+              </div>
+          </div>
+          <div key="2" className="card" data-grid={{x: 6, y: 0, w: 6, h: 1}}>
+            <div className="card-header">
+              <h1>Labels</h1>
             </div>
-          </Content>
-        </Container>
-      </Fragment>
+            <div className="card-body">
+              <Labels data={labelsData} total={totalTasks}/>
+            </div>
+          </div>
+        </ResponsiveGridLayout>
+      </Container>
     )
   }
 }
 
 export default Dashboard;
-
-

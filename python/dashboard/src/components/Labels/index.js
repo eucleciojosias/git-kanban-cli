@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip
 } from 'recharts';
 
-class Collaborators extends Component {
+class Labels extends Component {
 
   toPercent = (decimal, fixed = 0) => (
     `${((decimal / this.props.total) * 100).toFixed(fixed)}%`
@@ -11,9 +11,10 @@ class Collaborators extends Component {
 
   render() {
     const { data } = this.props;
-    return (
+
+    return(
       <BarChart
-        ref={reference => this.chart = reference}
+        layout="vertical"
         width={500}
         height={300}
         data={data}
@@ -22,16 +23,15 @@ class Collaborators extends Component {
         }}
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis tickFormatter={this.toPercent} />
+        <XAxis type="number" tickFormatter={this.toPercent}/>
+        <YAxis dataKey="name" type="category" width={70} />
         <Tooltip />
-        <Legend />
         <Bar dataKey="total" label fill="#8884d8" />
-        <Bar dataKey="pair" label fill="#82ca9d" />
       </BarChart>
-    );
+    )
   }
-}
+ }
+
+export default Labels;
 
 
-export default Collaborators;
