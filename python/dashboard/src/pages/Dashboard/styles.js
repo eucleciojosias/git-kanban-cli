@@ -10,6 +10,11 @@ export const Container = styled.div`
     .card-header {
     border-radius: 3px 3px 0 0;
     transition: all 0.5s;
+    cursor: grab;
+
+    &:active {
+      cursor: grabbing;
+    }
 
     h1, h2, h3, h4, h5, h6{
       text-align: center;

@@ -6,6 +6,7 @@ import moment from 'moment';
 import { Container, Title } from './styles';
 import Labels from '../../components/Labels';
 import Collaborators from '../../components/Collaborators';
+import LastWeek from '../../components/LastWeek';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -16,8 +17,15 @@ class Dashboard extends Component {
   state = {
     metricsGithub: [],
     collaboratorsData: [],
+    LastWeekData: [
+      {name: "semana 1", total: "22"},
+      {name: "semana 1", total: "26"},
+      {name: "semana 1", total: "20"},
+      {name: "semana 1", total: "15"}
+    ],
+    totalWeek: 83,
     labelsData: [],
-    layouts: {}
+    layouts: {},
   }
 
   componentDidMount() {
@@ -59,7 +67,7 @@ class Dashboard extends Component {
   }
 
   render() {
-    const { collaboratorsData, labelsData, totalTasks } = this.state;
+    const { collaboratorsData, labelsData, totalTasks, LastWeekData, totalWeek } = this.state;
     return (
       <Container>
         <Title>
@@ -88,6 +96,14 @@ class Dashboard extends Component {
             </div>
             <div className="card-body">
               <Labels data={labelsData} total={totalTasks}/>
+            </div>
+          </div>
+          <div key="3" className="card" data-grid={{x: 6, y: 0, w: 6, h: 1}}>
+            <div className="card-header">
+              <h1>Últimas 4 semanas</h1>
+            </div>
+            <div className="card-body">
+              <LastWeek data={LastWeekData} total={totalWeek}/>
             </div>
           </div>
         </ResponsiveGridLayout>
