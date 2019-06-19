@@ -15,8 +15,8 @@ class Labels extends Component {
     return(
       <BarChart
         layout="vertical"
-        width={500}
-        height={300}
+        width={400}
+        height={250}
         data={data}
         margin={{
           top: 5, right: 30, left: 20, bottom: 5,

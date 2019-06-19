@@ -8,29 +8,29 @@ export const Container = styled.div`
     margin-right: 20px;
 
     .card-header {
-    border-radius: 3px 3px 0 0;
-    transition: all 0.5s;
-    cursor: grab;
+      border-radius: 3px 3px 0 0;
+      transition: all 0.5s;
+      cursor: grab;
 
-    &:active {
-      cursor: grabbing;
-    }
+      &:active {
+        cursor: grabbing;
+      }
 
-    h1, h2, h3, h4, h5, h6{
-      text-align: center;
-      font-weight: 600;
-      padding: 10px;
+      h1, h2, h3, h4, h5, h6 {
+        text-align: center;
+        font-weight: 600;
+        padding: 10px;
+      }
     }
-  }
 
   .card-body {
     padding: 20px;
   }
 
   .card-footer {
-    border-radius: 0 0 3px 3px;
-    background-color: #C8CED5;
-  }
+      border-radius: 0 0 3px 3px;
+      background-color: #C8CED5;
+    }
   }
 `;
 

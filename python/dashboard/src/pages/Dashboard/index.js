@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
-import metrics from '../../data/metrics.json';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import moment from 'moment';
 
 import { Container, Title } from './styles';
 import Labels from '../../components/Labels';
 import Collaborators from '../../components/Collaborators';
-import LastWeek from '../../components/LastWeek';
+import Throughput from '../../components/Throughput';
+
+import axios from 'axios';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -15,95 +16,97 @@ const breakpoints = { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 };
 
 class Dashboard extends Component {
   state = {
-    metricsGithub: [],
+    metrics: [],
     collaboratorsData: [],
-    LastWeekData: [
-      {name: "semana 1", total: "22"},
-      {name: "semana 1", total: "26"},
-      {name: "semana 1", total: "20"},
-      {name: "semana 1", total: "15"}
-    ],
-    totalWeek: 83,
+    throughputWeek: [],
+    throughputMonth: 0,
     labelsData: [],
     layouts: {},
   }
 
   componentDidMount() {
     setTimeout(() => {
-      this.updateChart();
+      this.updateChart()
     }, 600)
   }
 
   updateChart = async () => {
-    const chartData  = []
+    const response = await axios.get('http://agile.compufacil.com.br/metrics.json')
+    const metrics = response.data
+    const currentWeek = metrics[0]
 
-    metrics.collaborators.forEach(collaborator => {
+    let collaboratorsData  = []
+    currentWeek.collaborators.forEach(collaborator => {
       if (collaborator.tasks_count > 0) {
-        const collaboratorFormatted = {
+        collaboratorsData.push({
           name: collaborator.name.substr(0, 12),
           total: collaborator.tasks_count,
           pair: collaborator.pair_count
-        }
-        chartData.push(collaboratorFormatted)
+        })
       }
     });
 
-    const labelsData = []
-
-    metrics.labels.forEach(labels => {
+    let labelsData = []
+    currentWeek.labels.forEach(labels => {
       if (labels.tasks_count > 0) {
-        const labelsFormatted = {
+        labelsData.push({
           name: labels.label,
           total: labels.tasks_count,
-        }
-        labelsData.push(labelsFormatted)
+        })
       }
     });
-    this.setState({ collaboratorsData: chartData, labelsData, totalTasks: metrics.total_tasks })
-  }
 
-  getDate = () => {
-    return moment().format('DD/MM/YYYY');
+    let throughputWeek = []
+    metrics.forEach(week => {
+      throughputWeek.push({
+        date: moment(week.week_date).format('DD/MM'),
+        total: week.total_tasks
+      })
+    });
+
+    let throughputMonth = throughputWeek.reduce(function(total, week) {
+      return total + week.total
+    }, 0)
+
+    this.setState({ totalTasks: currentWeek.total_tasks, collaboratorsData, labelsData, throughputWeek, throughputMonth })
   }
 
   render() {
-    const { collaboratorsData, labelsData, totalTasks, LastWeekData, totalWeek } = this.state;
     return (
       <Container>
         <Title>
-          <span>{this.getDate()}</span>
-          <span>Total tasks: {totalTasks}</span>
+          <strong>Tasks this week: {this.state.totalTasks}</strong>
         </Title>
         <ResponsiveGridLayout
           layouts={this.state.layouts}
           breakpoints={breakpoints}
           draggableHandle='.card-header'
-          rowHeight={400}
+          rowHeight={350}
           cols={cols}
           margin={[25, 25]}
         >
-          <div key="1" className="card" data-grid={{x: 0, y: 0, w: 6, h: 1}}>
+          <div key="1" className="card" data-grid={{x: 0, y: 0, w: 4, h: 1}}>
               <div className="card-header">
-                <h1>Colaboradores</h1>
+                <h3>Tasks by member</h3>
               </div>
               <div className="card-body">
-                <Collaborators data={collaboratorsData} total={totalTasks}/>
+                <Collaborators data={this.state.collaboratorsData} total={this.state.totalTasks}/>
               </div>
           </div>
-          <div key="2" className="card" data-grid={{x: 6, y: 0, w: 6, h: 1}}>
+          <div key="2" className="card" data-grid={{x: 4, y: 0, w: 4, h: 1}}>
             <div className="card-header">
-              <h1>Labels</h1>
+              <h3>Tasks by label</h3>
             </div>
             <div className="card-body">
-              <Labels data={labelsData} total={totalTasks}/>
+              <Labels data={this.state.labelsData} total={this.state.totalTasks}/>
             </div>
           </div>
-          <div key="3" className="card" data-grid={{x: 6, y: 0, w: 6, h: 1}}>
+          <div key="3" className="card" data-grid={{x: 8, y: 0, w: 4, h: 1}}>
             <div className="card-header">
-              <h1>Últimas 4 semanas</h1>
+              <h3>Throughput</h3>
             </div>
             <div className="card-body">
-              <LastWeek data={LastWeekData} total={totalWeek}/>
+              <Throughput data={this.state.throughputWeek} />
             </div>
           </div>
         </ResponsiveGridLayout>
