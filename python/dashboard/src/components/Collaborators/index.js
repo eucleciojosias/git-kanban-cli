@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
 } from 'recharts';
 
 class Collaborators extends Component {
@@ -25,7 +25,6 @@ class Collaborators extends Component {
         <XAxis dataKey="name" />
         <YAxis tickFormatter={this.toPercent} />
         <Tooltip />
-        <Legend />
         <Bar dataKey="total" label fill="#8884d8" />
         <Bar dataKey="pair" label fill="#82ca9d" />
       </BarChart>

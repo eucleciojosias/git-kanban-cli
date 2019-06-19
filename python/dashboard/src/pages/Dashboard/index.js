@@ -56,6 +56,10 @@ class Dashboard extends Component {
       }
     });
 
+    metrics.sort(function(a, b) {
+      return moment(a.week_date) - moment(b.week_date)
+    });
+
     let throughputWeek = []
     metrics.forEach(week => {
       throughputWeek.push({
