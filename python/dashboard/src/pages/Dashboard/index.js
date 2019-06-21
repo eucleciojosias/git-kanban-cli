@@ -89,15 +89,15 @@ class Dashboard extends Component {
           cols={cols}
           margin={[25, 25]}
         >
-          <div key="1" className="card" data-grid={{x: 0, y: 0, w: 4, h: 1}}>
-              <div className="card-header">
-                <h3>Tasks by member</h3>
-              </div>
-              <div className="card-body">
-                <Collaborators data={this.state.collaboratorsData} total={this.state.totalTasks}/>
-              </div>
+          <div key="1" className="card" data-grid={{x: 0, y: 0, w: 3, h: 1}}>
+            <div className="card-header">
+              <h3>Throughput</h3>
+            </div>
+            <div className="card-body">
+              <Throughput data={this.state.throughputWeek} />
+            </div>
           </div>
-          <div key="2" className="card" data-grid={{x: 4, y: 0, w: 4, h: 1}}>
+          <div key="2" className="card" data-grid={{x: 3, y: 0, w: 4, h: 1}}>
             <div className="card-header">
               <h3>Tasks by label</h3>
             </div>
@@ -105,13 +105,13 @@ class Dashboard extends Component {
               <Labels data={this.state.labelsData} total={this.state.totalTasks}/>
             </div>
           </div>
-          <div key="3" className="card" data-grid={{x: 8, y: 0, w: 4, h: 1}}>
-            <div className="card-header">
-              <h3>Throughput</h3>
-            </div>
-            <div className="card-body">
-              <Throughput data={this.state.throughputWeek} />
-            </div>
+          <div key="3" className="card" data-grid={{x: 7, y: 0, w: 5, h: 1}}>
+              <div className="card-header">
+                <h3>Tasks by member</h3>
+              </div>
+              <div className="card-body">
+                <Collaborators data={this.state.collaboratorsData} total={this.state.totalTasks}/>
+              </div>
           </div>
         </ResponsiveGridLayout>
       </Container>

@@ -10,7 +10,7 @@ class Throughput extends Component {
     return (
       <BarChart
         ref={reference => this.chart = reference}
-        width={350}
+        width={300}
         height={250}
         data={data}
         margin={{
@@ -19,7 +19,7 @@ class Throughput extends Component {
       >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="date" />
-        <YAxis />
+        <YAxis width={20} />
         <Tooltip />
         <Bar dataKey="total" label fill="#8884d8" barSize={30}/>
       </BarChart>

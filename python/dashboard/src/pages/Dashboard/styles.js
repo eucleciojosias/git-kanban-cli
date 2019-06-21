@@ -5,7 +5,7 @@ export const Container = styled.div`
     border-radius: 5px;
     background-color: #FFFFFF;
     box-shadow:0px 2px 8px rgba(0,0,0,0.07);
-    margin-right: 20px;
+    margin-right: 0;
 
     .card-header {
       border-radius: 3px 3px 0 0;
@@ -24,7 +24,7 @@ export const Container = styled.div`
     }
 
   .card-body {
-    padding: 20px;
+    padding: 5px;
   }
 
   .card-footer {
