@@ -45,4 +45,4 @@ export const Title = styled.div`
   span {
     margin-top: 15px;
   }
-`
+`;
