@@ -4,7 +4,6 @@ import {
 } from 'recharts';
 
 class Collaborators extends Component {
-
   toPercent = (decimal, fixed = 0) => (
     `${((decimal / this.props.total) * 100).toFixed(fixed)}%`
   )
@@ -22,7 +21,7 @@ class Collaborators extends Component {
         }}
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" angle={-45} height={50} orientation='top' textAnchor="start"  />
+        <XAxis dataKey="name" angle={-45} height={50} orientation="top" textAnchor="start" />
         <YAxis width={30} />
         <Tooltip />
         <Legend />

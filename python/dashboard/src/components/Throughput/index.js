@@ -4,7 +4,6 @@ import {
 } from 'recharts';
 
 class Throughput extends Component {
-
   render() {
     const { data } = this.props;
     return (
@@ -21,7 +20,7 @@ class Throughput extends Component {
         <XAxis dataKey="date" />
         <YAxis width={20} />
         <Tooltip />
-        <Bar dataKey="total" label fill="#8884d8" barSize={30}/>
+        <Bar dataKey="total" label fill="#8884d8" barSize={30} />
       </BarChart>
     );
   }
