@@ -12,26 +12,32 @@ export const Container = styled.div`
   height: 60px;
   padding: 0 10px;
 
-  &:nth-child(odd) {
+  &:nth-child(even) {
     background: #EEF0F0;
   }
 
   h4 {
     margin: 0;
+    color: #7A818A;
   }
 
   div {
     display: flex;
-    align-items: center
+    align-items: center;
 
     span {
+      display: flex;
+      align-items: baseline;
       font-size: 22px;
       font-weight: 400;
-    }
+      color: #7A818A;
+      margin-left: 10px;
 
-    p {
-      font-size: 16px;
-      margin: 0;
+      p {
+        font-size: 16px;
+        margin: 5px 0 0 0;
+        color: #7A818A;
+      }
     }
   }
-`
+`;

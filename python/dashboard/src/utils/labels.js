@@ -2,7 +2,8 @@ import React from 'react';
 
 function renderText(child, x, y, rotate, stroke, key) {
   if (child && child.content) {
-    return (<text
+    return (
+<text
       key={key}
       x={x}
       y={y}
@@ -11,19 +12,24 @@ function renderText(child, x, y, rotate, stroke, key) {
       stroke={stroke}
       {...child.props}>
       {child.content}
-    </text>);
+    </text>
+);
   }
 
-  return (<text
+  return (
+<text
     key={key}
     x={x}
     y={y}
     transform={`rotate(${rotate})`}
     textAnchor="middle"
-    stroke={stroke}>{child}</text>);
+    stroke={stroke}>{child}</text>
+);
 }
 
-export default function AxisLabel({ axisType, x, y, width, height, stroke, children }) {
+export default function AxisLabel({
+ axisType, x, y, width, height, stroke, children 
+}) {
   const isVert = axisType === 'yAxis';
   const cx = isVert ? x : x + (width / 2);
   const cy = isVert ? (height / 2) + y : y + height + 20;
@@ -31,7 +37,8 @@ export default function AxisLabel({ axisType, x, y, width, height, stroke, child
   const lineHeight = 20;
 
   if (children.length > 1 && children.map) {
-    return (<g>
+    return (
+<g>
       {children.map((child, index) =>
         renderText(
           child,
@@ -41,7 +48,8 @@ export default function AxisLabel({ axisType, x, y, width, height, stroke, child
           stroke,
           index)
       )}
-    </g>);
+    </g>
+);
   }
 
   return renderText(children, cx, cy, rot, stroke);

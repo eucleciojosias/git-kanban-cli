@@ -8,18 +8,31 @@ export const Container = styled.div`
     margin-right: 20px;
 
     .card-header {
+      position: relative;
+      border-bottom: 1px dashed #E8E8E8;
       border-radius: 3px 3px 0 0;
       transition: all 0.5s;
       cursor: grab;
+      overflow: hidden;
+
+      &:before {
+        content: '';
+        width: 4px;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        background: #f00;
+        top: 0;
+        border-left: 7px solid #008DDE;
+      }
 
       &:active {
         cursor: grabbing;
       }
 
       h1, h2, h3, h4, h5, h6 {
-        text-align: center;
         font-weight: 600;
-        padding: 10px;
+        padding: 10px 20px;
       }
     }
 

@@ -6,35 +6,53 @@ import AxisLabel from '../../utils/labels';
 
 class CycleTime extends Component {
   state = {
-    data: [
-      {date: "02/06", hours: 24},
-      {date: "09/06", hours: 15},
-      {date: "16/06", hours: 21},
-      {date: "23/06", hours: 12},
-    ]
+    breakpoints: {
+      xxs: 350,
+      xs: 450,
+      sm: 350,
+      md: 350,
+      lg: 350,
+    },
   }
 
   render() {
-    const { data } = this.state;
+    const { data, breakpoint } = this.props;
+    const { breakpoints } = this.state;
     return (
       <LineChart
         ref={reference => this.chart = reference}
-        width={350}
+        width={breakpoint && breakpoints[breakpoint]}
         height={250}
         data={data}
         margin={{
-          top: 5, right: 30, left: 20, bottom: 5,
+          top: 5, right: 30, left: 20, bottom: 20,
         }}
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="date" />
-        <YAxis label={<AxisLabel axisType="yAxis" x={25} y={115} width={0} height={0}>HOURS</AxisLabel>}/>
+        <XAxis
+          dataKey="date"
+          label={(
+            <AxisLabel axisType="xAxis" x={breakpoint === 'xs' ? 250 : 200} y={225} width={0} height={0}>{{
+              content: 'WEEK',
+              props: { fontSize: 10, fontWeight: 'bold' },
+            }}
+            </AxisLabel>
+          )}
+        />
+        <YAxis
+          label={(
+            <AxisLabel axisType="yAxis" x={25} y={115} width={0} height={0}>{{
+              content: 'HOURS',
+              props: { fontSize: 10, fontWeight: 'bold' },
+            }}
+            </AxisLabel>
+          )}
+        />
         <Tooltip />
-        <Line type="linear" dataKey="hours" stroke="#8884d8" />
+        <Line type="linear" dataKey="total" stroke="#8884d8" />
       </LineChart>
     );
   }
 }
-
 
 export default CycleTime;
