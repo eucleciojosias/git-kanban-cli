@@ -163,7 +163,7 @@ class Dashboard extends Component {
           compactType={compactType}
           preventCollision={!compactType}
         >
-          <div key="1" className="card">
+         <div key="1" className="card">
             <div className="card-header">
               <h3>Throughput</h3>
             </div>

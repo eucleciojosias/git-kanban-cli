@@ -32,5 +32,4 @@ class Collaborators extends Component {
   }
 }
 
-
 export default Collaborators;

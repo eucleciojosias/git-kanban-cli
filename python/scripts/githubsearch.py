@@ -7,17 +7,16 @@ import os
 from functools import reduce
 import datetime
 
-CURRENT_ROOT = os.path.abspath(os.path.dirname(__file__))
-
 class GithubSearch(object):
     config = {}
     issues = {}
     weeks_date = {}
+    githubEvents = None
 
-    def __init__(self, config, until_date):
+    def __init__(self, config, until_date, githubEvents):
         self.config = config
         self.weeks_date = self.getLastFourWeeksByDate(until_date)
-        self.issues = self.getIssuesFromDate(self.weeks_date['last_week3'])
+        self.githubEvents = githubEvents
 
     def githubRequest(self, endpoint, payload):
         uri = self.config['github']['api_uri'] + endpoint
@@ -29,10 +28,10 @@ class GithubSearch(object):
         response = requests.get(uri, params=payload, headers=headers)
         return response
 
-    def getIssuesFromDate(self, since_date):
+    def getIssuesFromMonth(self):
         payload = {
             'q': 'repo:{1} is:issue is:closed closed:>={0}'.format(
-                since_date.strftime('%Y-%m-%d'),
+                self.weeks_date['last_week3'].strftime('%Y-%m-%d'),
                 self.config['github']['repository_path']
             ),
             'per_page': 100
@@ -53,13 +52,6 @@ class GithubSearch(object):
             'last_week3': this_week - datetime.timedelta(days=21)
         }
 
-    def getIssuesMock(self, since_date):
-        file_path = os.path.join(CURRENT_ROOT, 'test', 'api_request_mock.json')
-        with open(file_path, "r") as read_file:
-            response = json.load(read_file)
-
-        return response
-
     def getIssuesByLabel(self, filter_label, issues):
         filtered_items = list(filter(
             lambda item: filter_label in [label['name'] for label in item['labels']],
@@ -67,9 +59,6 @@ class GithubSearch(object):
         ))
 
         return filtered_items
-
-    def pretty_json(self, response_json):
-        return json.dumps(response_json, sort_keys=True, indent=4)
 
     def getIssuesByAssignee(self, filter_assignee, issues):
         filtered_items = list(filter(
@@ -104,6 +93,7 @@ class GithubSearch(object):
         data_result = {
             'week_date': since_date.strftime('%Y-%m-%d'),
             'total_tasks': len(filtered_issues),
+            'cycle_time_avg': self.githubEvents.getCycleTimeAvg(filtered_issues),
             'collaborators': [],
             'labels': []
         }
@@ -122,7 +112,6 @@ class GithubSearch(object):
                 'pair_count': response['pair_count']
             })
 
-
         for label in self.config['labels']:
             items = self.getIssuesByLabel(label, filtered_issues)
             data_result['labels'].append({
@@ -131,25 +120,3 @@ class GithubSearch(object):
             })
 
         return data_result
-
-
-def main():
-    file_path = os.path.join(CURRENT_ROOT, 'config', 'config.json')
-    with open(file_path, "r") as read_file:
-        config = json.load(read_file)
-
-    until_date = datetime.datetime.now()
-    if len(sys.argv) > 1:
-        until_date = datetime_object = datetime.datetime.strptime(sys.argv[1], '%Y-%m-%d')
-
-    githubSearch = GithubSearch(config, until_date)
-
-    result = []
-    for week_date in githubSearch.weeks_date.values():
-        result.append(githubSearch.getResultByWeek(week_date))
-
-    print(githubSearch.pretty_json(result))
-
-
-if __name__ == "__main__":
-    main()
