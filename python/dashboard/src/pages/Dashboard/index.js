@@ -39,25 +39,25 @@ class Dashboard extends Component {
       lg:
         [
           {
-            w: 3, h: 9, x: 0, y: 0, i: '1',
+            w: 5, h: 9, x: 0, y: 0, i: '1',
           },
           {
-            w: 4, h: 9, x: 3, y: 0, i: '2',
+            w: 3, h: 9, x: 5, y: 0, i: '2',
           },
           {
-            w: 5, h: 9, x: 7, y: 0, i: '3',
+            w: 4, h: 9, x: 8, y: 0, i: '3',
           },
           {
             w: 4, h: 9, x: 0, y: 1, i: '4',
           },
           {
-            w: 4, h: 9, x: 4, y: 1, i: '5',
+            w: 3, h: 9, x: 4, y: 1, i: '5',
           },
           {
-            w: 4, h: 9, x: 8, y: 1, i: '6',
+            w: 5, h: 9, x: 7, y: 1, i: '6',
           },
           {
-            w: 4, h: 9, x: 0, y: 2, i: '7',
+            w: 4, h: 6, x: 0, y: 2, i: '7',
           },
         ],
     },
@@ -163,7 +163,7 @@ class Dashboard extends Component {
           compactType={compactType}
           preventCollision={!compactType}
         >
-          <div key="1" className="card">
+          <div key="2" className="card">
             <div className="card-header">
               <h3>Throughput</h3>
             </div>
@@ -171,7 +171,7 @@ class Dashboard extends Component {
               <Throughput data={throughputWeek} />
             </div>
           </div>
-          <div key="2" className="card">
+          <div key="4" className="card">
             <div className="card-header">
               <h3>Tasks by label</h3>
             </div>
@@ -179,7 +179,7 @@ class Dashboard extends Component {
               <Labels data={labelsData} total={totalTasks} />
             </div>
           </div>
-          <div key="3" className="card">
+          <div key="6" className="card">
             <div className="card-header">
               <h3>Tasks by member</h3>
             </div>
@@ -188,7 +188,7 @@ class Dashboard extends Component {
             </div>
           </div>
           <div
-            key="4"
+            key="3"
             className="card"
           >
             <div className="card-header">
@@ -199,7 +199,7 @@ class Dashboard extends Component {
             </div>
           </div>
           <div
-            key="5"
+            key="7"
             className="card"
           >
             <div className="card-header">
@@ -210,7 +210,7 @@ class Dashboard extends Component {
             </div>
           </div>
           <div
-            key="6"
+            key="1"
             className="card"
           >
             <div className="card-header">
@@ -221,7 +221,7 @@ class Dashboard extends Component {
             </div>
           </div>
           <div
-            key="7"
+            key="5"
             className="card"
           >
             <div className="card-header">
