@@ -16,7 +16,6 @@ class GithubSearch(object):
     def __init__(self, config, until_date, githubEvents):
         self.config = config
         self.weeks_date = self.getLastFourWeeksByDate(until_date)
-        self.issues = self.getIssuesFromDate(self.weeks_date['last_week3'])
         self.githubEvents = githubEvents
 
     def githubRequest(self, endpoint, payload):
@@ -29,10 +28,10 @@ class GithubSearch(object):
         response = requests.get(uri, params=payload, headers=headers)
         return response
 
-    def getIssuesFromDate(self, since_date):
+    def getIssuesFromMonth(self):
         payload = {
             'q': 'repo:{1} is:issue is:closed closed:>={0}'.format(
-                since_date.strftime('%Y-%m-%d'),
+                self.weeks_date['last_week3'].strftime('%Y-%m-%d'),
                 self.config['github']['repository_path']
             ),
             'per_page': 100
@@ -52,13 +51,6 @@ class GithubSearch(object):
             'last_week2': this_week - datetime.timedelta(days=14),
             'last_week3': this_week - datetime.timedelta(days=21)
         }
-
-    def getIssuesMock(self, since_date):
-        file_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'test', 'api_search_mock.json')
-        with open(file_path, "r") as read_file:
-            response = json.load(read_file)
-
-        return response
 
     def getIssuesByLabel(self, filter_label, issues):
         filtered_items = list(filter(
