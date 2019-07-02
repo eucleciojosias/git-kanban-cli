@@ -13,14 +13,14 @@ def pretty_json(response_json):
     return json.dumps(response_json, sort_keys=True, indent=4)
 
 def getIssuesMock():
-    file_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'test', 'api_search_mock.json')
+    file_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'mock', 'api_search_mock.json')
     with open(file_path, "r") as read_file:
         response = json.load(read_file)
 
     return response
 
 def getIssueEventMock():
-    file_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'test', 'issue_events_mock.json')
+    file_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'mock', 'issue_events_mock.json')
     with open(file_path, "r") as read_file:
         response = json.load(read_file)
 
