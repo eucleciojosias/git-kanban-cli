@@ -25,7 +25,7 @@ def main():
     githubSearch = GithubSearch(config, until_date, githubEvents)
 
     githubSearch.issues = githubSearch.getIssuesFromMonth()
-    githubEvents.issuesEvents = githubEvents.getIssuesEvents(githubSearch.issues)
+    githubEvents.issuesEvents = githubEvents.getIssuesEvents(githubSearch.issues['items'])
 
     result = []
     for week_date in githubSearch.weeks_date.values():
