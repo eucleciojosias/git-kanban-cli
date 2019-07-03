@@ -6,11 +6,19 @@ import os
 import datetime
 from githubsearch import GithubSearch
 from githubevents import GithubEvents
+import tempfile
 
 CURRENT_ROOT = os.path.abspath(os.path.dirname(__file__))
+TMP_ISSUES_EVENTS_FILE = os.path.join(tempfile.gettempdir(), 'issue-events.json')
 
 def pretty_json(response_json):
     return json.dumps(response_json, sort_keys=True, indent=4)
+
+def load_issues_events():
+    with open(TMP_ISSUES_EVENTS_FILE, "r") as read_file:
+        issues_events = json.load(read_file)
+
+    return issues_events
 
 def main():
     file_path = os.path.join(CURRENT_ROOT, 'config', 'config.json')
@@ -25,7 +33,16 @@ def main():
     githubSearch = GithubSearch(config, until_date, githubEvents)
 
     githubSearch.issues = githubSearch.getIssuesFromMonth()
-    githubEvents.issuesEvents = githubEvents.getIssuesEvents(githubSearch.issues['items'])
+
+    issuesEvents = githubEvents.getIssuesEvents(githubSearch.issues['items'])
+    issuesEventsContent = str(pretty_json(issuesEvents))
+
+    file = open(TMP_ISSUES_EVENTS_FILE, 'w+')
+    file.write(issuesEventsContent)
+    file.flush()
+    file.close()
+
+    githubEvents.issuesEvents = load_issues_events()
 
     result = []
     for week_date in githubSearch.weeks_date.values():
