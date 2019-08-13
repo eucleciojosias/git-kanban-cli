@@ -2,8 +2,16 @@
 {
     "github": {
         "api_token": "YOUR_OAUTH_TOKEN",
-        "repository_path": "YOUR_REPOSITORY_PATH"
+        "repository_path": "YOUR_REPOSITORY_PATH",
+        "api_uri": "https://api.github.com/"
     },
+    "columns": [
+        "To do",
+        "In progress"
+        "Review",
+        "Testing",
+        "Done"
+    ],
     "labels": [
         "Bug",
         "Feature"
