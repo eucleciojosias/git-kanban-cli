@@ -36,7 +36,7 @@ class GithubSearch(object):
             ),
             'per_page': 100
         }
-        response = self.githubRequest('issues', payload)
+        response = self.githubRequest('search/issues', payload)
 
         return response.json()
 
