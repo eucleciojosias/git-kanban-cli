@@ -7,37 +7,45 @@ import requests
 
 class GithubCards(object):
     config = {}
-    cards_by_column = {}
+    project_cards = {}
 
     def __init__(self, config):
         self.config = config
-        self.cards_by_column = self.__getCardsByColunm()
 
-    def getCardsWorkInProgress(self):
-        card_content = []
+    def getCardsWorkInProgress(self, issues):
+        cards_content = []
 
-        for column, cards in self.cards_by_column.items():
+        for column, cards in self.project_cards.items():
             if (column in ['To do', 'Done']):
                 continue
 
             for card in cards:
-                content = self.__githubRequest(
-                    card['content_url'],
-                    'application/vnd.github.symmetra-preview+json'
-                ).json()
-                card_content.append(content)
+                issue_number = card['content_url'].split('/', 7)[-1]
+                issue_data = list(filter(
+                    lambda issue: int(issue_number) == int(issue['number']),
+                    issues['items']
+                ))
+                content = issue_data[0] if len(issue_data) > 0 else None
 
-        return card_content
+                if content == None:
+                    content = self.__githubRequest(
+                        card['content_url'],
+                        'application/vnd.github.symmetra-preview+json'
+                    ).json()
+
+                cards_content.append(content)
+
+        return cards_content
 
     def getSummaryMetric(self):
         summary = []
 
-        for column, cards in self.cards_by_column.items():
+        for column, cards in self.project_cards.items():
             summary.append({'stage' : column, 'total': len(cards)})
 
         return summary
 
-    def __getCardsByColunm(self):
+    def loadProjectCards(self):
         selected_project_for_metrics = self.__githubRequest(
             '{0}repos/{1}/projects'.format(
                 self.config['github']['api_uri'],
@@ -63,7 +71,7 @@ class GithubCards(object):
             ).json()
             cards[column['name']] = cards_by_column
 
-        return cards
+        self.project_cards = cards
 
     def __githubRequest(self, url, accept):
         headers = {

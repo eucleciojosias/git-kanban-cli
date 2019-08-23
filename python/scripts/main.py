@@ -37,6 +37,7 @@ def main():
         until_date = datetime_object = datetime.datetime.strptime(sys.argv[1], '%Y-%m-%d')
 
     githubCards = GithubCards(config)
+    githubCards.loadProjectCards()
     githubEvents = GithubEvents(config)
     githubSearch = GithubSearch(config, until_date, githubEvents)
 
@@ -52,11 +53,14 @@ def main():
     for week_date in githubSearch.weeks_date.values():
         result.append(githubSearch.getResultByWeek(week_date))
 
+    result.append({
+        'cards_summary': githubCards.getSummaryMetric()
+    })
+
     write_metrics_to_file('metrics.json', str(pretty_json(result)))
-    write_metrics_to_file('boardData.json', str(pretty_json({
-        'summary': githubCards.getSummaryMetric(),
-        'workInProgress': githubCards.getCardsWorkInProgress()
-    })))
+
+    result = githubCards.getCardsWorkInProgress(githubSearch.issues)
+    write_metrics_to_file('cards_wip.json', str(pretty_json(result)))
 
 
 if __name__ == "__main__":
