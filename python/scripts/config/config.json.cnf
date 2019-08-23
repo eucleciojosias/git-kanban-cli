@@ -7,8 +7,9 @@
     },
     "columns": [
         "To do",
-        "In progress"
+        "In progress",
         "Review",
+        "Ready to test",
         "Testing",
         "Done"
     ],
