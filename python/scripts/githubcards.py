@@ -62,7 +62,7 @@ class GithubCards(object):
 
         cards = {}
         for column in project_columns:
-            if (column['name'] not in self.config['columns']):
+            if (column['name'] not in self.config['project_columns']):
                 continue
 
             cards_by_column = self.__githubRequest(

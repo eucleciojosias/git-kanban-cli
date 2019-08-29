@@ -25,9 +25,7 @@ def main():
     with open(file_path, "r") as read_file:
         config = json.load(read_file)
 
-    until_date = datetime.datetime.now()
-    if len(sys.argv) > 1:
-        until_date = datetime_object = datetime.datetime.strptime(sys.argv[1], '%Y-%m-%d')
+    until_date = datetime_object = datetime.datetime.strptime('2019-06-24', '%Y-%m-%d')
 
     githubCards = GithubCards(config)
     githubEvents = GithubEvents(config)
@@ -44,8 +42,8 @@ def main():
     result.append({
         'cards_summary': githubCards.getSummaryMetric()
     })
-    # print(pretty_json(result))
-    print(pretty_json(githubCards.getCardsWorkInProgress(githubSearch.issues)))
+    print(pretty_json(result))
+    # print(pretty_json(githubCards.getCardsWorkInProgress(githubSearch.issues)))
 
 
 if __name__ == "__main__":
