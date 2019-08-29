@@ -14,7 +14,7 @@ class GithubEvents(object):
     def __init__(self, config):
         self.config = config
 
-    def getIssueEvents(self, url):
+    def __getIssueEvents(self, url):
         headers = {
             'Content-Type': 'application/json',
             'Accept': 'application/vnd.github.starfox-preview+json',
@@ -25,62 +25,62 @@ class GithubEvents(object):
 
         return response.json()
 
-    def cycleTimeInSec(self, events):
-        move_card_events = list(filter(
-            lambda event: 'moved_columns_in_project' == event['event'],
+    def __calcTimeInColumns(self, events):
+        moveCardEvents = list(filter(
+            lambda event: 'moved_columns_in_project' == event['event'] or 'added_to_project' == event['event'],
             events
         ))
 
-        start_card = 'In progress'
-        start_ev = list(filter(
-            lambda event: start_card == event['project_card']['column_name'],
-            move_card_events
-        ))
-        if not start_ev:
-            start_card = 'Review'
-            start_ev = list(filter(
-                lambda event: start_card == event['project_card']['column_name'],
-                move_card_events
+        cyclesTimes = []
+        for event in moveCardEvents:
+            if 'previous_column_name' not in event['project_card']:
+                continue
+
+            startCol = event['project_card']['previous_column_name']
+            startEvent = next(iter(list(filter(
+                lambda event: event['project_card']['column_name'] == startCol,
+                moveCardEvents
+            ))))
+
+            lastColTime = datetime.datetime.strptime(startEvent['created_at'], '%Y-%m-%dT%H:%M:%SZ')
+            moveTimeToThisCol = datetime.datetime.strptime(event['created_at'], '%Y-%m-%dT%H:%M:%SZ')
+
+            duration = moveTimeToThisCol - lastColTime
+            element = {
+                'column': startCol,
+                'end_column': event['project_card']['column_name'],
+                'duration': duration.total_seconds(),
+            }
+
+            colElement = list(filter(
+                lambda cycle: startCol == cycle['column'],
+                cyclesTimes
             ))
-        if not start_ev:
-            start_card = 'Testing'
-            start_ev = list(filter(
-                lambda event: start_card == event['project_card']['column_name'],
-                move_card_events
-            ))
+            if not colElement:
+                cyclesTimes.append(element)
+                continue
 
-        start = datetime.datetime.now()
-        done = datetime.datetime.now()
+            element = next(iter(colElement))
+            index = cyclesTimes.index(element)
+            cyclesTimes[index] = element
 
-        for event in move_card_events:
-            if event['project_card']['column_name'] == start_card:
-                start = datetime.datetime.strptime(event['created_at'], '%Y-%m-%dT%H:%M:%SZ')
-            elif event['project_card']['column_name'] == 'Done':
-                done = datetime.datetime.strptime(event['created_at'], '%Y-%m-%dT%H:%M:%SZ')
-
-        duration = done - start
-
-        return duration.total_seconds()
+        return cyclesTimes
 
     def getIssuesEvents(self, issues):
         eventsList = {}
         for issue in issues:
-            events = self.getIssueEvents(issue['events_url'])
-            item = {issue['id']: events }
+            events = self.__getIssueEvents(issue['events_url'])
+            item = { issue['id']: events }
             eventsList.update(item)
 
         return eventsList
 
-    def getCycleTimeAvg(self, issues):
-        if not issues:
-            return 0
-
-        cycleTimeTotal = 0
-        eventsList = {}
+    def getCardsCyclesTimes(self, issues):
+        cardsCyclesTimes = {}
         for issue in issues:
             events = self.issuesEvents[str(issue['id'])]
+            issueCyclesTimes = self.__calcTimeInColumns(events)
+            item = { issue['id']: issueCyclesTimes }
+            cardsCyclesTimes.update(item)
 
-            issueCycleTime = self.cycleTimeInSec(events)
-            cycleTimeTotal = cycleTimeTotal + issueCycleTime
-
-        return cycleTimeTotal / len(issues)
+        return cardsCyclesTimes
