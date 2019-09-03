@@ -20,7 +20,7 @@ class GithubEvents(object):
             'Accept': 'application/vnd.github.starfox-preview+json',
             'Authorization': 'token {0}'.format(self.config['github']['api_token'])
         }
-        payload = {}
+        payload = {'per_page': 100}
         response = requests.get(url, params=payload, headers=headers)
 
         return response.json()
@@ -65,6 +65,27 @@ class GithubEvents(object):
             cyclesTimes[index] = element
 
         return cyclesTimes
+
+    def getDateStart(self, events_url):
+        events = self.__getIssueEvents(events_url)
+        moveCardEvents = list(filter(
+            lambda event: 'moved_columns_in_project' == event['event'] or 'added_to_project' == event['event'],
+            events
+        ))
+
+        for event in moveCardEvents:
+            if event['project_card']['column_name'] == 'In progress':
+                return event['created_at']
+
+        for event in moveCardEvents:
+            if event['project_card']['column_name'] == 'Review':
+                return event['created_at']
+
+        for event in moveCardEvents:
+            if event['project_card']['column_name'] == 'Testing':
+                return event['created_at']
+
+        return None
 
     def getIssuesEvents(self, issues):
         eventsList = {}

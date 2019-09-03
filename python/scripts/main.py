@@ -11,6 +11,9 @@ import tempfile
 
 CURRENT_ROOT = os.path.abspath(os.path.dirname(__file__))
 TMP_ISSUES_EVENTS_FILE = os.path.join(tempfile.gettempdir(), 'issue-events.json')
+TMP_METRIC_FILE = os.path.join(tempfile.gettempdir(), 'metrics.json')
+TMP_CARDS_SUMMARY_FILE = os.path.join(tempfile.gettempdir(), 'cards_summary.json')
+TMP_WIP_CARDS_FILE = os.path.join(tempfile.gettempdir(), 'cards_wip.json')
 
 def pretty_json(response_json):
     return json.dumps(response_json, sort_keys=True, indent=4)
@@ -36,9 +39,11 @@ def main():
     if len(sys.argv) > 1:
         until_date = datetime_object = datetime.datetime.strptime(sys.argv[1], '%Y-%m-%d')
 
-    githubCards = GithubCards(config)
-    githubCards.loadProjectCards()
     githubEvents = GithubEvents(config)
+
+    githubCards = GithubCards(config, githubEvents)
+    githubCards.loadProjectCards()
+
     githubSearch = GithubSearch(config, until_date, githubEvents)
 
     githubSearch.issues = githubSearch.getIssuesFromMonth()
@@ -53,14 +58,15 @@ def main():
     for week_date in githubSearch.weeks_date.values():
         result.append(githubSearch.getResultByWeek(week_date))
 
-    result.append({
-        'cards_summary': githubCards.getSummaryMetric()
-    })
+    write_metrics_to_file(TMP_METRIC_FILE, str(pretty_json(result)))
 
-    write_metrics_to_file('metrics.json', str(pretty_json(result)))
+    result = []
+    result = githubCards.getSummaryMetric()
+    write_metrics_to_file(TMP_CARDS_SUMMARY_FILE, str(pretty_json(result)))
 
+    result = []
     result = githubCards.getCardsWorkInProgress(githubSearch.issues)
-    write_metrics_to_file('cards_wip.json', str(pretty_json(result)))
+    write_metrics_to_file(TMP_WIP_CARDS_FILE, str(pretty_json(result)))
 
 
 if __name__ == "__main__":
