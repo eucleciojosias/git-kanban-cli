@@ -8,7 +8,7 @@ import Labels from '../../components/Labels';
 import Collaborators from '../../components/Collaborators';
 import Throughput from '../../components/Throughput';
 import CycleTime from '../../components/CycleTime';
-import Stat from '../../components/Stat';
+import CycleTimeByStage from '../../components/CycleTimeByStage';
 import TasksInProgress from '../../components/TasksInProgress';
 import TasksSummary from '../../components/TasksSummary';
 
@@ -25,11 +25,16 @@ class Dashboard extends Component {
     },
   };
 
+  stageCols = ['In progress', 'Review', 'Testing'];
+
   state = {
     metrics: [],
     collaboratorsData: [],
     throughputWeek: [],
     cycleTimeWeek: [],
+    cardsSummary: [],
+    cardsWip: [],
+    cycleTimeAvgByStage: [],
     throughputMonth: 0,
     labelsData: [],
     currentBreakpoint: 'lg',
@@ -39,25 +44,25 @@ class Dashboard extends Component {
       lg:
         [
           {
-            w: 5, h: 9, x: 0, y: 0, i: '1',
+            w: 5, h: 9, x: 0, y: 0, i: 'tasks_wip',
           },
           {
-            w: 3, h: 9, x: 5, y: 0, i: '2',
+            w: 3, h: 9, x: 5, y: 0, i: 'throughput',
           },
           {
-            w: 4, h: 9, x: 8, y: 0, i: '3',
+            w: 4, h: 9, x: 8, y: 0, i: 'cycle_time',
           },
           {
-            w: 4, h: 9, x: 0, y: 1, i: '4',
+            w: 4, h: 9, x: 0, y: 1, i: 'labels',
           },
           {
-            w: 3, h: 9, x: 4, y: 1, i: '5',
+            w: 3, h: 12, x: 4, y: 1, i: 'tasks_summary',
           },
           {
-            w: 5, h: 9, x: 7, y: 1, i: '6',
+            w: 5, h: 9, x: 7, y: 1, i: 'collaborators',
           },
           {
-            w: 4, h: 6, x: 0, y: 2, i: '7',
+            w: 4, h: 6, x: 0, y: 2, i: 'by_stage',
           },
         ],
     },
@@ -82,8 +87,15 @@ class Dashboard extends Component {
   };
 
   updateChart = async () => {
-    const response = await axios.get('http://agile.compufacil.com.br/metrics.json');
-    const metrics = response.data;
+    const metricsJson = await axios.get('http://agile.compufacil.com.br/metrics.json');
+    const metrics = metricsJson.data;
+
+    const cardsJson = await axios.get('http://agile.compufacil.com.br/cards_wip.json');
+    const cardsWip = cardsJson.data;
+
+    const summaryJson = await axios.get('http://agile.compufacil.com.br/cards_summary.json');
+    const cardsSummary = summaryJson.data;
+
     const currentWeek = metrics[0];
 
     const collaboratorsData = [];
@@ -109,26 +121,37 @@ class Dashboard extends Component {
 
     metrics.sort((a, b) => moment(a.week_date) - moment(b.week_date));
 
-    const throughputWeek = [];
+    let throughputWeek = [];
+    let cycleTimeWeek = [];
+
     metrics.forEach((week) => {
       throughputWeek.push({
         date: moment(week.week_date).format('DD/MM'),
         total: week.total_tasks,
       });
-    });
 
-    const cycleTimeWeek = [];
-    metrics.forEach((week) => {
       cycleTimeWeek.push({
         date: moment(week.week_date).format('DD/MM'),
-        total: this.formatSecondsToHour(week.cycle_time_avg),
+        total: this.formatSecondsToHour(week.cycle_time_total_avg),
       });
+    });
+
+    const cycleTimeAvgByStage = metrics[1].cycle_by_column_avg.filter((item) => {
+      return this.stageCols.includes(item.column)
     });
 
     const throughputMonth = throughputWeek.reduce((total, week) => total + week.total, 0);
 
     this.setState({
-      totalTasks: currentWeek.total_tasks, collaboratorsData, labelsData, throughputWeek, throughputMonth, cycleTimeWeek,
+      totalTasks: currentWeek.total_tasks,
+      collaboratorsData,
+      labelsData,
+      throughputWeek,
+      throughputMonth,
+      cycleTimeWeek,
+      cardsSummary,
+      cycleTimeAvgByStage,
+      cardsWip
     });
   }
 
@@ -145,6 +168,9 @@ class Dashboard extends Component {
       labelsData,
       throughputWeek,
       cycleTimeWeek,
+      cardsSummary,
+      cycleTimeAvgByStage,
+      cardsWip
     } = this.state;
 
     return (
@@ -163,7 +189,7 @@ class Dashboard extends Component {
           compactType={compactType}
           preventCollision={!compactType}
         >
-          <div key="2" className="card">
+          <div key="throughput" className="card">
             <div className="card-header">
               <h3>Throughput</h3>
             </div>
@@ -171,7 +197,7 @@ class Dashboard extends Component {
               <Throughput data={throughputWeek} />
             </div>
           </div>
-          <div key="4" className="card">
+          <div key="labels" className="card">
             <div className="card-header">
               <h3>Tasks by label</h3>
             </div>
@@ -179,7 +205,7 @@ class Dashboard extends Component {
               <Labels data={labelsData} total={totalTasks} />
             </div>
           </div>
-          <div key="6" className="card">
+          <div key="collaborators" className="card">
             <div className="card-header">
               <h3>Tasks by member</h3>
             </div>
@@ -188,7 +214,7 @@ class Dashboard extends Component {
             </div>
           </div>
           <div
-            key="3"
+            key="cycle_time"
             className="card"
           >
             <div className="card-header">
@@ -199,36 +225,36 @@ class Dashboard extends Component {
             </div>
           </div>
           <div
-            key="7"
+            key="by_stage"
             className="card"
           >
             <div className="card-header">
-              <h3>By Status</h3>
+              <h3>Average time by stage (last week)</h3>
             </div>
             <div className="card-body" style={{ padding: 0 }}>
-              <Stat />
+              <CycleTimeByStage data={cycleTimeAvgByStage} />
             </div>
           </div>
           <div
-            key="1"
+            key="tasks_wip"
             className="card"
           >
             <div className="card-header">
               <h3>Tasks In Progress</h3>
             </div>
             <div className="card-body" style={{ overflowY: 'scroll', height: '85%' }}>
-              <TasksInProgress />
+              <TasksInProgress data={cardsWip} />
             </div>
           </div>
           <div
-            key="5"
+            key="tasks_summary"
             className="card"
           >
             <div className="card-header">
               <h3>Tasks Summary</h3>
             </div>
             <div className="card-body" style={{ padding: 0 }}>
-              <TasksSummary />
+              <TasksSummary data={cardsSummary} />
             </div>
           </div>
         </ResponsiveGridLayout>

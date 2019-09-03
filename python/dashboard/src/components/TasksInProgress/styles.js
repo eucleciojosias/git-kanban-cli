@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import colors from '../../styles/colors';
 
 export const Wrapper = styled.div`
   display: flex;
@@ -83,35 +82,10 @@ export const Bottom = styled.div`
 `;
 
 export const Label = styled.div`
-  border: 1px solid ${({ type }) => (type === 'Frontend' && colors.FRONTEND)
-    || (type === 'Backend' && colors.BACKEND)
-    || (type === 'Devops' && colors.DEVOPS)
-    || (type === 'Highest' && colors.HIGHEST)
-    || (type === 'High' && colors.HIGH)
-    || (type === 'Medium' && colors.MEDIUM)
-    || (type === 'UX' && colors.UX)
-    || (type === 'Bug' && colors.BUG)
-    || (type === 'NewFeature' && colors.NEWFEATURE)
-    || (type === 'Improvement' && colors.IMPROVEMENT)
-    || (type === 'Maintenance' && colors.MAINTENANCE)
-    || (type === 'ResellerDemand' && colors.RESELLER)
-};
+  border: 1px solid;
   border-radius: 5px;
   padding: 2px;
   margin-right: 4px;
-  color: ${({ type }) => (type === 'Frontend' && colors.FRONTEND)
-    || (type === 'Backend' && colors.BACKEND)
-    || (type === 'Devops' && colors.DEVOPS)
-    || (type === 'Highest' && colors.HIGHEST)
-    || (type === 'High' && colors.HIGH)
-    || (type === 'Medium' && colors.MEDIUM)
-    || (type === 'UX' && colors.UX)
-    || (type === 'Bug' && colors.BUG)
-    || (type === 'NewFeature' && colors.NEWFEATURE)
-    || (type === 'Improvement' && colors.IMPROVEMENT)
-    || (type === 'Maintenance' && colors.MAINTENANCE)
-    || (type === 'ResellerDemand' && colors.RESELLER)
-};
 
     p {
       font-size: 10px;
@@ -119,17 +93,11 @@ export const Label = styled.div`
 `;
 
 export const Stage = styled.div`
-  border: 1px solid ${({ type }) => (type === 'Review' && colors.REVIEW)
-    || (type === 'Progress' && colors.INPROGRESS)
-    || (type === 'Testing' && colors.TESTING)
-};
+  border: 1px solid black;
   border-radius: 5px;
   padding: 2px;
   margin-right: 4px;
-  color: ${({ type }) => (type === 'Review' && colors.REVIEW)
-    || (type === 'Progress' && colors.INPROGRESS)
-    || (type === 'Testing' && colors.TESTING)
-};
+  color: black;
 
     p {
       font-size: 10px;
