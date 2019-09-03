@@ -87,13 +87,13 @@ class Dashboard extends Component {
   };
 
   updateChart = async () => {
-    const metricsJson = await axios.get('http://agile.compufacil.com.br/metrics.json');
+    const metricsJson = await axios.get('https://agile.compufacil.com.br/metrics.json');
     const metrics = metricsJson.data;
 
-    const cardsJson = await axios.get('http://agile.compufacil.com.br/cards_wip.json');
+    const cardsJson = await axios.get('https://agile.compufacil.com.br/cards_wip.json');
     const cardsWip = cardsJson.data;
 
-    const summaryJson = await axios.get('http://agile.compufacil.com.br/cards_summary.json');
+    const summaryJson = await axios.get('https://agile.compufacil.com.br/cards_summary.json');
     const cardsSummary = summaryJson.data;
 
     const currentWeek = metrics[0];
