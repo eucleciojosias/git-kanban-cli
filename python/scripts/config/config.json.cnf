@@ -5,7 +5,7 @@
         "repository_path": "YOUR_REPOSITORY_PATH",
         "api_uri": "https://api.github.com/"
     },
-    "columns": [
+    "sprint_columns": [
         "To do",
         "In progress",
         "Review",

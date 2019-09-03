@@ -7,16 +7,19 @@ import requests
 
 class GithubCards(object):
     config = {}
+    project_cols = {}
     project_cards = {}
+    githubEvents = None
 
-    def __init__(self, config):
+    def __init__(self, config, githubEvents):
         self.config = config
+        self.githubEvents = githubEvents
 
     def getCardsWorkInProgress(self, issues):
         cards_content = []
 
         for column, cards in self.project_cards.items():
-            if (column in ['To do', 'Done']):
+            if (column not in self.config['sprint_columns'] or column in ['To do', 'Done']):
                 continue
 
             for card in cards:
@@ -25,13 +28,23 @@ class GithubCards(object):
                     lambda issue: int(issue_number) == int(issue['number']),
                     issues['items']
                 ))
-                content = issue_data[0] if len(issue_data) > 0 else None
+                content = next(iter(issue_data)) if len(issue_data) > 0 else None
 
                 if content == None:
                     content = self.__githubRequest(
                         card['content_url'],
                         'application/vnd.github.symmetra-preview+json'
                     ).json()
+
+                col_id = card['column_url'].split('/', 5)[-1]
+                currentColumn = next(iter(list(filter(
+                    lambda column: int(col_id) == int(column['id']),
+                    self.project_cols
+                ))))
+                content['current_column'] = currentColumn
+                startedDate = self.githubEvents.getDateStart(content['events_url'])
+                if startedDate is not None:
+                    content['started_date'] = startedDate
 
                 cards_content.append(content)
 
@@ -59,12 +72,10 @@ class GithubCards(object):
             selected_project['columns_url'],
             'application/vnd.github.inertia-preview+json'
         ).json()
+        self.project_cols = project_columns
 
         cards = {}
         for column in project_columns:
-            if (column['name'] not in self.config['project_columns']):
-                continue
-
             cards_by_column = self.__githubRequest(
                 column['cards_url'],
                 'application/vnd.github.inertia-preview+json'

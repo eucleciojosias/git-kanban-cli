@@ -27,23 +27,28 @@ def main():
 
     until_date = datetime_object = datetime.datetime.strptime('2019-06-24', '%Y-%m-%d')
 
-    githubCards = GithubCards(config)
     githubEvents = GithubEvents(config)
+    githubCards = GithubCards(config, githubEvents)
     githubSearch = GithubSearch(config, until_date, githubEvents)
 
     githubSearch.issues = getMockData('api_search_mock.json')
     githubEvents.issuesEvents = getMockData('issue_events_mock.json')
     githubCards.project_cards = getMockData('project_cards.json')
+    githubCards.project_cols = getMockData('project_cols_enum.json')
 
     result = []
     for week_date in githubSearch.weeks_date.values():
         result.append(githubSearch.getResultByWeek(week_date))
 
-    result.append({
-        'cards_summary': githubCards.getSummaryMetric()
-    })
     print(pretty_json(result))
-    # print(pretty_json(githubCards.getCardsWorkInProgress(githubSearch.issues)))
+
+    result = []
+    result = githubCards.getSummaryMetric()
+    print(pretty_json(result))
+
+    result = []
+    result = githubCards.getCardsWorkInProgress(githubSearch.issues)
+    print(pretty_json(result))
 
 
 if __name__ == "__main__":
