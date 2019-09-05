@@ -23,6 +23,8 @@ class TasksInProgress extends Component {
 
   render() {
     const { data } = this.props;
+    data.sort((a, b) => moment(a.started_date) - moment(b.started_date))
+
     return (
       <Wrapper>
         <span>
@@ -35,7 +37,7 @@ class TasksInProgress extends Component {
               <strong>{ task.number }</strong>
             </div>
             <Top>
-              <strong>#{ task.number }</strong>
+              <a href={ task.html_url } target="_blank" rel="noopener noreferrer">#{ task.number }</a>
               <p>{ task.title }</p>
             </Top>
             <Center>
@@ -45,9 +47,11 @@ class TasksInProgress extends Component {
                   { moment(task.started_date).fromNow() }
                 </span>
               </div>
-              {task.assignees.map((assignee, aKey) => (
-                <img key={ aKey } src={ assignee.avatar_url } alt="avatar" />
-              ))}
+              <div>
+                {task.assignees.map((assignee, aKey) => (
+                  <img key={ aKey } src={ assignee.avatar_url } alt="avatar" />
+                ))}
+              </div>
             </Center>
             <Bottom type="Frontend">
               {task.labels.map((label, labelKey) => (

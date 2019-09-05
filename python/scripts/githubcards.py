@@ -91,6 +91,7 @@ class GithubCards(object):
             'Authorization': 'token {0}'.format(self.config['github']['api_token'])
         }
 
-        response = requests.get(url, params={}, headers=headers)
+        payload = {'per_page': 100}
+        response = requests.get(url, params=payload, headers=headers)
 
         return response

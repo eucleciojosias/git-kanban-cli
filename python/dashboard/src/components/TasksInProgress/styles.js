@@ -51,15 +51,21 @@ export const Top = styled.div`
   display: flex;
   flex-direction: column;
 
-  strong {
+  a {
     font-size: 18px;
     font-weight: 700;
     color: #747B84;
+    font-weight: bold;
+
+    &:hover,
+    &:active {
+      color: #747B84;
+    }
   }
 
   p {
     font-size: 16px;
-    color: #9A97A7;
+    color: #333;
   }
 `;
 
@@ -72,6 +78,7 @@ export const Center = styled.div`
   img {
     height: 25px;
     border-radius: 50%;
+    padding: 0px 1px;
   }
 `;
 
