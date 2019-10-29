@@ -1,4 +1,4 @@
-import { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle } from 'styled-components'
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -8,10 +8,10 @@ const GlobalStyle = createGlobalStyle`
   }
 
   body {
-    background: #e5e5e5 !important;
+    background: #fff !important;
     text-rendering: optimizeLegibility !important;
     -webkit-font-smoothing: antialiased !important;
   }
 `
 
-export default GlobalStyle;
+export default GlobalStyle

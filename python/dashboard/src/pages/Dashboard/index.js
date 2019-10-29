@@ -12,7 +12,6 @@ import CycleTimeByStage from '../../components/CycleTimeByStage';
 import TasksInProgress from '../../components/TasksInProgress';
 import TasksSummary from '../../components/TasksSummary';
 
-
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 class Dashboard extends Component {
